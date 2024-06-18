@@ -6,5 +6,5 @@ import (
 )
 
 type RoomRepository interface {
-	List() ([]entities.Room, *errs.Error)
+	List() ([]*entities.Room, *errs.Error)
 }
