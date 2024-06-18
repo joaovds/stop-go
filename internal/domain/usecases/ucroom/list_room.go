@@ -1,4 +1,4 @@
-package usecases
+package ucroom
 
 import (
 	"github.com/joaovds/stop-go/internal/domain/entities"
@@ -22,6 +22,10 @@ func NewListRoomOutput(room *entities.Room) *ListRoomOutput {
 func NewListRoomOutputList(rooms []*entities.Room) []*ListRoomOutput {
 	var list []*ListRoomOutput
 	for _, room := range rooms {
+		if room == nil {
+			continue
+		}
+
 		list = append(list, NewListRoomOutput(room))
 	}
 	return list
@@ -30,5 +34,3 @@ func NewListRoomOutputList(rooms []*entities.Room) []*ListRoomOutput {
 type ListRoomUseCase interface {
 	Execute() ([]*ListRoomOutput, *errs.Error)
 }
-
-// ----- ... -----

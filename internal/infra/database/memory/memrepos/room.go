@@ -4,6 +4,7 @@ import (
 	"sync"
 
 	"github.com/joaovds/stop-go/internal/domain/entities"
+	"github.com/joaovds/stop-go/internal/shared/errs"
 )
 
 type RoomRepository struct {
@@ -20,7 +21,7 @@ func NewRoomRepository() *RoomRepository {
 
 // ----- ... -----
 
-func (r *RoomRepository) List() ([]*entities.Room, error) {
+func (r *RoomRepository) List() ([]*entities.Room, *errs.Error) {
 	r.mutex.Lock()
 	defer r.mutex.Unlock()
 
@@ -28,6 +29,12 @@ func (r *RoomRepository) List() ([]*entities.Room, error) {
 	for _, room := range r.rooms {
 		rooms = append(rooms, room)
 	}
+
+	rooms = append(rooms, &entities.Room{
+		ID:   1,
+		Name: "Room 1",
+		Code: "ROOM_1",
+	})
 
 	return rooms, nil
 }
