@@ -18,12 +18,33 @@ func NewFindAll(repo room.Repository) *FindAll {
 // ----- ... -----
 
 func (f *FindAll) Execute(ctx context.Context) (*FindAllOutput, *errs.Error) {
-	return new(FindAllOutput), nil
+	rooms, err := f.repo.FindAll(ctx)
+	if err.IsError() {
+		return nil, err
+	}
+
+	return roomsToOutput(rooms), nil
 }
 
 // ----- ... -----
 
 type FindAllOutput []struct {
-	ID   string `json:"id"`
+	ID   int    `json:"id"`
 	Name string `json:"name"`
+}
+
+func roomsToOutput(rooms []*room.Room) *FindAllOutput {
+	output := make(FindAllOutput, len(rooms))
+
+	for i, r := range rooms {
+		output[i] = struct {
+			ID   int    `json:"id"`
+			Name string `json:"name"`
+		}{
+			ID:   r.ID,
+			Name: r.Name,
+		}
+	}
+
+	return &output
 }
