@@ -44,4 +44,17 @@
     - As configurações só poderão ser alteradas quando não houver nenhuma partida em andamento
     - O anfitrião poderá alterar os cargos dos jogadores da sala
 
-... continuar ...
+#### 1.5 Sair de sala
+- **Descrição:** Um jogador poderá sair da sala
+- **Detalhes:**
+    - Caso o ***anfitrião*** da sala saia, o cargo será passado para o user mais antigo que entrou na sala
+    - Quando o último jogador sair, a sala deve ser excluída
+
+### 2. Jogadores
+
+#### 2.1 Criar jogador (sessão)
+- **Descrição:**  Uma sessão poderá ser iniciada para jogar partidas
+- **Detalhes:**
+    - Qualquer pessoa poderá criar uma nova sessão para jogar
+    - Não é necessário login
+    - Deve ser informado um ***nickname*** para identificação do jogador
