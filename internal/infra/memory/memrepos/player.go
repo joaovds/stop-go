@@ -4,15 +4,19 @@ import (
 	"context"
 
 	"github.com/joaovds/stop-go/internal/domain/player"
+	"github.com/joaovds/stop-go/internal/infra/sqlite"
 	"github.com/joaovds/stop-go/pkg/errs"
 )
 
 type PlayerRepository struct {
+	db      *sqlite.DB
 	players []*player.Player
 }
 
-func NewPlayerRepository() *PlayerRepository {
-	return &PlayerRepository{}
+func NewPlayerRepository(db *sqlite.DB) *PlayerRepository {
+	return &PlayerRepository{
+		db: db,
+	}
 }
 
 // ----- ... -----

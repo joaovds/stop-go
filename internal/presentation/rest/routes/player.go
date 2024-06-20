@@ -5,6 +5,7 @@ import (
 
 	"github.com/joaovds/stop-go/internal/app/usecases/playeruc"
 	"github.com/joaovds/stop-go/internal/infra/memory/memrepos"
+	"github.com/joaovds/stop-go/internal/infra/sqlite"
 	"github.com/joaovds/stop-go/internal/presentation/rest/handlers"
 )
 
@@ -15,8 +16,8 @@ type PlayerRoutes struct {
 
 // ----- ... -----
 
-func NewPlayerRoutes(muxV1 *http.ServeMux) *PlayerRoutes {
-	playerRepo := memrepos.NewPlayerRepository()
+func NewPlayerRoutes(muxV1 *http.ServeMux, db *sqlite.DB) *PlayerRoutes {
+	playerRepo := memrepos.NewPlayerRepository(db)
 
 	return &PlayerRoutes{
 		muxV1: muxV1,

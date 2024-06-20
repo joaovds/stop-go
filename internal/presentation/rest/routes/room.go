@@ -5,6 +5,7 @@ import (
 
 	"github.com/joaovds/stop-go/internal/app/usecases/roomuc"
 	"github.com/joaovds/stop-go/internal/infra/memory/memrepos"
+	"github.com/joaovds/stop-go/internal/infra/sqlite"
 	"github.com/joaovds/stop-go/internal/presentation/rest/handlers"
 )
 
@@ -15,8 +16,8 @@ type RoomRoutes struct {
 
 // ----- ... -----
 
-func NewRoomRoutes(muxV1 *http.ServeMux) *RoomRoutes {
-	roomRepo := memrepos.NewRoomRepository()
+func NewRoomRoutes(muxV1 *http.ServeMux, db *sqlite.DB) *RoomRoutes {
+	roomRepo := memrepos.NewRoomRepository(db)
 
 	findAllUseCase := roomuc.NewFindAll(roomRepo)
 

@@ -4,13 +4,18 @@ import (
 	"context"
 
 	"github.com/joaovds/stop-go/internal/domain/room"
+	"github.com/joaovds/stop-go/internal/infra/sqlite"
 	"github.com/joaovds/stop-go/pkg/errs"
 )
 
-type RoomRepository struct{}
+type RoomRepository struct {
+	db *sqlite.DB
+}
 
-func NewRoomRepository() *RoomRepository {
-	return &RoomRepository{}
+func NewRoomRepository(db *sqlite.DB) *RoomRepository {
+	return &RoomRepository{
+		db: db,
+	}
 }
 
 // ----- ... -----

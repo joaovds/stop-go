@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"sync"
 
+	"github.com/joaovds/stop-go/internal/infra/sqlite"
 	"github.com/joaovds/stop-go/internal/presentation/rest/routes"
 )
 
@@ -15,9 +16,10 @@ type Rest struct {
 	MuxV1WS *http.ServeMux
 	Port    string
 	wg      *sync.WaitGroup
+	db      *sqlite.DB
 }
 
-func NewRest(wg *sync.WaitGroup) *Rest {
+func NewRest(wg *sync.WaitGroup, db *sqlite.DB) *Rest {
 	mainMux := http.NewServeMux()
 	muxV1 := http.NewServeMux()
 	muxV1WS := http.NewServeMux()
@@ -31,6 +33,7 @@ func NewRest(wg *sync.WaitGroup) *Rest {
 		MuxV1WS: muxV1WS,
 		Port:    "8080",
 		wg:      wg,
+		db:      db,
 	}
 
 	rest.SetupRoutes()
@@ -41,8 +44,8 @@ func NewRest(wg *sync.WaitGroup) *Rest {
 // ----- ... -----
 
 func (r *Rest) SetupRoutes() {
-	routes.NewRoomRoutes(r.MuxV1).RegisterRoutes()
-	routes.NewPlayerRoutes(r.MuxV1).RegisterRoutes()
+	routes.NewRoomRoutes(r.MuxV1, r.db).RegisterRoutes()
+	routes.NewPlayerRoutes(r.MuxV1, r.db).RegisterRoutes()
 }
 
 // ----- ... -----
