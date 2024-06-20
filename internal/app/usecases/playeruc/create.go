@@ -23,6 +23,12 @@ func (c *Create) Execute(ctx context.Context, params *CreateInput) *errs.Error {
 		return err
 	}
 
+	if exists, err := c.repo.NicknameExists(ctx, input.Nickname); err.IsError() {
+		return err
+	} else if exists {
+		return player.ErrNicknameAlreadyExists
+	}
+
 	err = c.repo.Create(ctx, input)
 	if err.IsError() {
 		return err

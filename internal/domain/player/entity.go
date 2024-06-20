@@ -30,12 +30,18 @@ func NewPlayer(nickname string) (*Player, *errs.Error) {
 // ----- ... -----
 
 var (
-	ErrInvalidNickname = errs.NewError("invalid nickname").SetStatus(400)
+	ErrInvalidNickname       = errs.NewError("invalid nickname").SetStatus(400)
+	ErrNicknameAlreadyExists = errs.NewError("nickname already exists").SetStatus(409)
+	ErrNicknameTooLong       = errs.NewError("nickname too long. Max 20 characters").SetStatus(400)
 )
 
 func (p *Player) Validate() *errs.Error {
 	if p.Nickname == "" {
 		return ErrInvalidNickname
+	}
+
+	if len(p.Nickname) > 20 {
+		return ErrNicknameTooLong
 	}
 
 	return nil

@@ -43,6 +43,18 @@ func (p *PlayerRepository) FindAll(ctx context.Context) ([]*player.Player, *errs
 
 // ----- ... -----
 
+func (p *PlayerRepository) NicknameExists(ctx context.Context, nickname string) (bool, *errs.Error) {
+	var exists bool
+	err := p.db.QueryRow(nicknameExistsQuery, nickname).Scan(&exists)
+	if err != nil {
+		return false, errs.NewError("error checking if nickname exists")
+	}
+
+	return exists, nil
+}
+
+// ----- ... -----
+
 func (p *PlayerRepository) Create(ctx context.Context, player *player.Player) *errs.Error {
 	_, err := p.db.Exec(createPlayerQuery, player.Nickname, player.CreatedAt, player.UpdatedAt)
 	if err != nil {
