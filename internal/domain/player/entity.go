@@ -7,17 +7,17 @@ import (
 )
 
 type Player struct {
-	ID         int
-	Nickname   string
-	Created_at time.Time
-	Update_at  time.Time
+	ID        int
+	Nickname  string
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }
 
 func NewPlayer(nickname string) (*Player, *errs.Error) {
 	player := &Player{
-		Nickname:   nickname,
-		Created_at: time.Now(),
-		Update_at:  time.Now(),
+		Nickname:  nickname,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
 	}
 
 	if err := player.Validate(); err != nil {
