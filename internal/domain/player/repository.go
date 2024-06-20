@@ -8,4 +8,5 @@ import (
 
 type Repository interface {
 	FindAll(ctx context.Context) ([]*Player, *errs.Error)
+	Create(ctx context.Context, player *Player) *errs.Error
 }

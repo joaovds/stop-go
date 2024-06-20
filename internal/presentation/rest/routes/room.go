@@ -31,5 +31,5 @@ func NewRoomRoutes(muxV1 *http.ServeMux) *RoomRoutes {
 // ----- ... -----
 
 func (r *RoomRoutes) RegisterRoutes() {
-	r.muxV1.HandleFunc("/rooms", r.handlers.FindAll)
+	r.muxV1.HandleFunc("GET /rooms", r.handlers.FindAll)
 }

@@ -18,12 +18,11 @@ type PlayerRoutes struct {
 func NewPlayerRoutes(muxV1 *http.ServeMux) *PlayerRoutes {
 	playerRepo := memrepos.NewPlayerRepository()
 
-	findAllUseCase := playeruc.NewFindAll(playerRepo)
-
 	return &PlayerRoutes{
 		muxV1: muxV1,
 		handlers: handlers.NewPlayerHandlers(
-			findAllUseCase,
+			playeruc.NewFindAll(playerRepo),
+			playeruc.NewCreate(playerRepo),
 		),
 	}
 }
@@ -31,5 +30,6 @@ func NewPlayerRoutes(muxV1 *http.ServeMux) *PlayerRoutes {
 // ----- ... -----
 
 func (p *PlayerRoutes) RegisterRoutes() {
-	p.muxV1.HandleFunc("/players", p.handlers.FindAll)
+	p.muxV1.HandleFunc("GET /players", p.handlers.FindAll)
+	p.muxV1.HandleFunc("POST /players", p.handlers.Create)
 }
