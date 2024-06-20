@@ -1,12 +1,13 @@
 package room
 
 type Room struct {
-	ID   int
+	ID   string
 	Name string
 }
 
-func NewRoom(name string) *Room {
+func NewRoom(id, name string) *Room {
 	return &Room{
+		ID:   id,
 		Name: name,
 	}
 }

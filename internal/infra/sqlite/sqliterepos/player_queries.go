@@ -11,7 +11,7 @@ const (
   `
 
 	createPlayerQuery = `
-  INSERT INTO players (nickname, created_at, updated_at)
-  VALUES ($1, $2, $3);
+  INSERT INTO players (id, nickname, created_at, updated_at)
+  VALUES ($1, $2, $3, $4);
   `
 )

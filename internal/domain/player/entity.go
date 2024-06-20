@@ -7,14 +7,15 @@ import (
 )
 
 type Player struct {
-	ID        int
+	ID        string
 	Nickname  string
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
 
-func NewPlayer(nickname string) (*Player, *errs.Error) {
+func NewPlayer(id, nickname string) (*Player, *errs.Error) {
 	player := &Player{
+		ID:        id,
 		Nickname:  nickname,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),

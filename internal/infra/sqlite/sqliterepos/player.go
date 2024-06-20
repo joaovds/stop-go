@@ -56,7 +56,7 @@ func (p *PlayerRepository) NicknameExists(ctx context.Context, nickname string) 
 // ----- ... -----
 
 func (p *PlayerRepository) Create(ctx context.Context, player *player.Player) *errs.Error {
-	_, err := p.db.Exec(createPlayerQuery, player.Nickname, player.CreatedAt, player.UpdatedAt)
+	_, err := p.db.Exec(createPlayerQuery, player.ID, player.Nickname, player.CreatedAt, player.UpdatedAt)
 	if err != nil {
 		return errs.NewError("error creating player")
 	}

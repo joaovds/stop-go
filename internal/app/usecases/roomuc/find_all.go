@@ -29,7 +29,7 @@ func (f *FindAll) Execute(ctx context.Context) (*FindAllOutput, *errs.Error) {
 // ----- ... -----
 
 type findAllOutputItem struct {
-	ID   int    `json:"id"`
+	ID   string `json:"id"`
 	Name string `json:"name"`
 }
 

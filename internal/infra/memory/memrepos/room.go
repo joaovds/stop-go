@@ -23,7 +23,7 @@ func NewRoomRepository(db *sqlite.DB) *RoomRepository {
 func (r *RoomRepository) FindAll(ctx context.Context) ([]*room.Room, *errs.Error) {
 	return []*room.Room{
 		{
-			ID:   1,
+			ID:   "1",
 			Name: "Room 1",
 		},
 	}, nil

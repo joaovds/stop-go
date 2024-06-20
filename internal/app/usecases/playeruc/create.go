@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/joaovds/stop-go/internal/domain/player"
+	"github.com/joaovds/stop-go/internal/infra/providers"
 	"github.com/joaovds/stop-go/pkg/errs"
 )
 
@@ -44,7 +45,7 @@ type CreateInput struct {
 }
 
 func inputToPlayer(input *CreateInput) (*player.Player, *errs.Error) {
-	res, err := player.NewPlayer(input.Nickname)
+	res, err := player.NewPlayer(providers.NewID(), input.Nickname)
 	if err.IsError() {
 		return nil, err
 	}
