@@ -13,6 +13,8 @@ type RoomRoutes struct {
 	handlers *handlers.RoomHandlers
 }
 
+// ----- ... -----
+
 func NewRoomRoutes(muxV1 *http.ServeMux) *RoomRoutes {
 	roomRepo := memrepos.NewRoomRepository()
 
@@ -29,5 +31,5 @@ func NewRoomRoutes(muxV1 *http.ServeMux) *RoomRoutes {
 // ----- ... -----
 
 func (r *RoomRoutes) RegisterRoutes() {
-	r.muxV1.HandleFunc("/room", r.handlers.FindAll)
+	r.muxV1.HandleFunc("/rooms", r.handlers.FindAll)
 }

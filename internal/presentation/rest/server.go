@@ -42,6 +42,7 @@ func NewRest(wg *sync.WaitGroup) *Rest {
 
 func (r *Rest) SetupRoutes() {
 	routes.NewRoomRoutes(r.MuxV1).RegisterRoutes()
+	routes.NewPlayerRoutes(r.MuxV1).RegisterRoutes()
 }
 
 // ----- ... -----

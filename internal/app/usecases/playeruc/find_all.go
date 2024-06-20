@@ -1,17 +1,17 @@
-package roomuc
+package playeruc
 
 import (
 	"context"
 
-	"github.com/joaovds/stop-go/internal/domain/room"
+	"github.com/joaovds/stop-go/internal/domain/player"
 	"github.com/joaovds/stop-go/pkg/errs"
 )
 
 type FindAll struct {
-	repo room.Repository
+	repo player.Repository
 }
 
-func NewFindAll(repo room.Repository) *FindAll {
+func NewFindAll(repo player.Repository) *FindAll {
 	return &FindAll{repo: repo}
 }
 
@@ -23,25 +23,25 @@ func (f *FindAll) Execute(ctx context.Context) (*FindAllOutput, *errs.Error) {
 		return nil, err
 	}
 
-	return roomsToOutput(rooms), nil
+	return playersToOutput(rooms), nil
 }
 
 // ----- ... -----
 
 type findAllOutputItem struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
+	ID       int    `json:"id"`
+	Nickname string `json:"name"`
 }
 
 type FindAllOutput []findAllOutputItem
 
-func roomsToOutput(rooms []*room.Room) *FindAllOutput {
-	output := make(FindAllOutput, len(rooms))
+func playersToOutput(players []*player.Player) *FindAllOutput {
+	output := make(FindAllOutput, len(players))
 
-	for i, r := range rooms {
+	for i, p := range players {
 		output[i] = findAllOutputItem{
-			ID:   r.ID,
-			Name: r.Name,
+			ID:       p.ID,
+			Nickname: p.Nickname,
 		}
 	}
 
