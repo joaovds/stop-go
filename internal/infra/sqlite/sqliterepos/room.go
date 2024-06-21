@@ -22,12 +22,24 @@ func NewRoomRepository(db *sqlite.DB) *RoomRepository {
 // ----- ... -----
 
 func (r *RoomRepository) FindAll(ctx context.Context) ([]*room.Room, *errs.Error) {
-	return []*room.Room{
-		{
-			ID:   "1",
-			Name: "Room 1",
-		},
-	}, nil
+	rows, err := r.db.Query(findAllRoomsQuery)
+	if err != nil {
+		return nil, errs.NewError("error finding all rooms")
+	}
+	defer rows.Close()
+
+	rooms := make([]*room.Room, 0)
+	for rows.Next() {
+		var roomRes room.Room
+		err := rows.Scan(&roomRes.ID, &roomRes.Name, &roomRes.Code, &roomRes.MaxPlayers, &roomRes.MinPlayers, &roomRes.TotalPlayers, &roomRes.CreatedAt, &roomRes.UpdatedAt)
+		if err != nil {
+			return nil, errs.NewError("error scanning rooms")
+		}
+
+		rooms = append(rooms, &roomRes)
+	}
+
+	return rooms, nil
 }
 
 // ----- ... -----

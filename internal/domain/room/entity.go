@@ -10,15 +10,16 @@ import (
 )
 
 type Room struct {
-	ID         string
-	Name       string
-	Code       string
-	Players    map[string]*Player
-	HostID     string
-	MaxPlayers int
-	MinPlayers int
-	CreatedAt  time.Time
-	UpdatedAt  time.Time
+	ID           string
+	Name         string
+	Code         string
+	Players      map[string]*Player
+	TotalPlayers int
+	HostID       string
+	MaxPlayers   int
+	MinPlayers   int
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
 }
 
 func NewRoom(id, name string, maxPlayers, minPlayers int, createdBy *player.Player) (*Room, *errs.Error) {
