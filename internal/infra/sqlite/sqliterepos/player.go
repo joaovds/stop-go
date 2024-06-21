@@ -55,6 +55,18 @@ func (p *PlayerRepository) NicknameExists(ctx context.Context, nickname string) 
 
 // ----- ... -----
 
+func (p *PlayerRepository) Exists(ctx context.Context, id string) (bool, *errs.Error) {
+	var exists bool
+	err := p.db.QueryRow(existsPlayerQuery, id).Scan(&exists)
+	if err != nil {
+		return false, errs.NewError("error checking if player exists")
+	}
+
+	return exists, nil
+}
+
+// ----- ... -----
+
 func (p *PlayerRepository) Create(ctx context.Context, player *player.Player) *errs.Error {
 	_, err := p.db.Exec(createPlayerQuery, player.ID, player.Nickname, player.CreatedAt, player.UpdatedAt)
 	if err != nil {
