@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/joaovds/stop-go/internal/app/usecases/roomuc"
+	"github.com/joaovds/stop-go/internal/infra/memory/memrepos"
 	"github.com/joaovds/stop-go/internal/infra/sqlite"
 	"github.com/joaovds/stop-go/internal/infra/sqlite/sqliterepos"
 	"github.com/joaovds/stop-go/internal/presentation/rest/handlers"
@@ -17,7 +18,7 @@ type RoomRoutes struct {
 // ----- ... -----
 
 func NewRoomRoutes(muxV1 *http.ServeMux, db *sqlite.DB) *RoomRoutes {
-	roomRepo := sqliterepos.NewRoomRepository(db)
+	roomRepo := memrepos.NewRoomRepository()
 	playerRepo := sqliterepos.NewPlayerRepository(db)
 
 	return &RoomRoutes{
