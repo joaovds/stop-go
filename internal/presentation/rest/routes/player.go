@@ -3,9 +3,6 @@ package routes
 import (
 	"net/http"
 
-	"github.com/joaovds/stop-go/internal/app/usecases/playeruc"
-	"github.com/joaovds/stop-go/internal/infra/sqlite"
-	"github.com/joaovds/stop-go/internal/infra/sqlite/sqliterepos"
 	"github.com/joaovds/stop-go/internal/presentation/rest/handlers"
 )
 
@@ -16,21 +13,13 @@ type PlayerRoutes struct {
 
 // ----- ... -----
 
-func NewPlayerRoutes(muxV1 *http.ServeMux, db *sqlite.DB) *PlayerRoutes {
-	playerRepo := sqliterepos.NewPlayerRepository(db)
-
+func NewPlayerRoutes(muxV1 *http.ServeMux) *PlayerRoutes {
 	return &PlayerRoutes{
-		muxV1: muxV1,
-		handlers: handlers.NewPlayerHandlers(
-			playeruc.NewFindAll(playerRepo),
-			playeruc.NewCreate(playerRepo),
-		),
+		muxV1:    muxV1,
+		handlers: handlers.NewPlayerHandlers(),
 	}
 }
 
 // ----- ... -----
 
-func (p *PlayerRoutes) RegisterRoutes() {
-	p.muxV1.HandleFunc("GET /players", p.handlers.FindAll)
-	p.muxV1.HandleFunc("POST /players", p.handlers.Create)
-}
+func (p *PlayerRoutes) RegisterRoutes() {}

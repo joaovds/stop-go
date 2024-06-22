@@ -31,19 +31,7 @@ func (c *Create) Execute(ctx context.Context, params *CreateInput) *errs.Error {
 		return err
 	}
 
-	if playersExists, err := c.service.PlayerExists(ctx, params.CreatorID); err.IsError() {
-		return err
-	} else if !playersExists {
-		return errs.NewError("player does not exists").SetStatus(404)
-	}
-
-	if exists, err := c.repo.NameExists(ctx, input.Name); err.IsError() {
-		return err
-	} else if exists {
-		return room.ErrNameAlreadyExists
-	}
-
-	err = c.repo.Create(ctx, input)
+	err = c.service.CreateRoom(ctx, params.CreatorID, input)
 	if err.IsError() {
 		return err
 	}

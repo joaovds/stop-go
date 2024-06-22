@@ -7,7 +7,7 @@ import (
 )
 
 type Repository interface {
-	FindAll(ctx context.Context) ([]*Player, *errs.Error)
+	FindByID(ctx context.Context, id string) (*Player, *errs.Error)
 	NicknameExists(ctx context.Context, nickname string) (bool, *errs.Error)
 	Exists(ctx context.Context, id string) (bool, *errs.Error)
 	Create(ctx context.Context, player *Player) *errs.Error

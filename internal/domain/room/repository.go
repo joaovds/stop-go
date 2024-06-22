@@ -8,6 +8,7 @@ import (
 
 type Repository interface {
 	FindAll(ctx context.Context) ([]*Room, *errs.Error)
+	FindByID(ctx context.Context, id string) (*Room, *errs.Error)
 	NameExists(ctx context.Context, name string) (bool, *errs.Error)
 	Create(ctx context.Context, room *Room) *errs.Error
 }

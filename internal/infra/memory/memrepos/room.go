@@ -3,7 +3,6 @@ package memrepos
 import (
 	"context"
 
-	"github.com/joaovds/stop-go/internal/domain/player"
 	"github.com/joaovds/stop-go/internal/domain/room"
 	"github.com/joaovds/stop-go/internal/infra/memory/memdata"
 	"github.com/joaovds/stop-go/pkg/errs"
@@ -25,33 +24,37 @@ func (r *RoomRepository) FindAll(ctx context.Context) ([]*room.Room, *errs.Error
 		players := make(map[string]*room.Player)
 		for _, playerValue := range roomValue.Players {
 			players[playerValue.ID] = &room.Player{
-				Player: &player.Player{
-					ID:        playerValue.ID,
-					Nickname:  playerValue.Nickname,
-					CreatedAt: playerValue.CreatedAt,
-					UpdatedAt: playerValue.UpdatedAt,
-				},
+				Player:   playerValue.ToDomain(),
 				Score:    playerValue.Score,
 				Role:     room.PlayerRole(playerValue.Role),
 				JoinedAt: playerValue.JoinedAt,
 			}
 		}
 
-		result = append(result, &room.Room{
-			ID:           roomValue.ID,
-			Name:         roomValue.Name,
-			Code:         roomValue.Code,
-			MaxPlayers:   roomValue.Max,
-			MinPlayers:   roomValue.Min,
-			TotalPlayers: len(roomValue.Players),
-			HostID:       roomValue.HostID,
-			Players:      players,
-			CreatedAt:    roomValue.CreatedAt,
-			UpdatedAt:    roomValue.UpdatedAt,
-		})
+		result = append(result, roomValue.ToDomain())
 	}
 
 	return result, nil
+}
+
+// ----- ... -----
+
+func (r *RoomRepository) FindByID(ctx context.Context, id string) (*room.Room, *errs.Error) {
+	roomValue, exists := memdata.Rooms[id]
+	if !exists {
+		return nil, errs.NewError("room not found").SetStatus(404)
+	}
+	players := make(map[string]*room.Player)
+	for _, playerValue := range roomValue.Players {
+		players[playerValue.ID] = &room.Player{
+			Player:   playerValue.ToDomain(),
+			Score:    playerValue.Score,
+			Role:     room.PlayerRole(playerValue.Role),
+			JoinedAt: playerValue.JoinedAt,
+		}
+	}
+
+	return roomValue.ToDomain(), nil
 }
 
 // ----- ... -----

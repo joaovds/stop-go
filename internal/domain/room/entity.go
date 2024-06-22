@@ -89,28 +89,8 @@ func (r *Room) generateCode() *errs.Error {
 
 // ----- ... -----
 
-func (r *Room) AddPlayer(p *player.Player, role PlayerRole) *errs.Error {
-	if len(r.Players) >= r.MaxPlayers {
-		return ErrRoomFull
-	}
-
-	player, err := NewPlayer(p, role)
-	if err != nil {
-		return err
-	}
-
-	player.JoinedAt = time.Now()
-	r.Players[player.ID] = player
-	return nil
-}
-
-func (r *Room) RemovePlayer(p *player.Player) *errs.Error {
-	if _, ok := r.Players[p.ID]; !ok {
-		return nil
-	}
-
-	delete(r.Players, p.ID)
-	return nil
+func (r *Room) IsFull() bool {
+	return len(r.Players) >= r.MaxPlayers
 }
 
 // ----- ... -----
