@@ -13,7 +13,7 @@ type Room struct {
 	ID           string
 	Name         string
 	Code         string
-	Players      map[string]*Player
+	Players      map[string]*player.Player
 	TotalPlayers int
 	HostID       string
 	MaxPlayers   int
@@ -23,20 +23,16 @@ type Room struct {
 }
 
 func NewRoom(id, name string, maxPlayers, minPlayers int, createdBy *player.Player) (*Room, *errs.Error) {
-	host, err := NewPlayer(createdBy, Host)
-	if err != nil {
-		return nil, err
-	}
-
 	room := &Room{
-		ID:         id,
-		Name:       name,
-		Players:    map[string]*Player{host.ID: host},
-		HostID:     host.ID,
-		MaxPlayers: maxPlayers,
-		MinPlayers: minPlayers,
-		CreatedAt:  time.Now(),
-		UpdatedAt:  time.Now(),
+		ID:           id,
+		Name:         name,
+		Players:      map[string]*player.Player{createdBy.ID: createdBy},
+		HostID:       createdBy.ID,
+		MaxPlayers:   maxPlayers,
+		MinPlayers:   minPlayers,
+		TotalPlayers: 1,
+		CreatedAt:    time.Now(),
+		UpdatedAt:    time.Now(),
 	}
 
 	if err := room.generateCode(); err != nil {
@@ -51,12 +47,13 @@ func NewRoom(id, name string, maxPlayers, minPlayers int, createdBy *player.Play
 }
 
 var (
-	ErrInvalidRole       = errs.NewError("invalid role").SetStatus(400)
-	ErrRoomFull          = errs.NewError("room is full").SetStatus(400)
-	ErrNameAlreadyExists = errs.NewError("name already exists").SetStatus(409)
-	ErrInvalidMaxPlayers = errs.NewError("max_players must be greater than 1").SetStatus(400)
-	ErrInvalidMinPlayers = errs.NewError("min_players must be greater than 2").SetStatus(400)
-	ErrGenerateCode      = errs.NewError("error generating code").SetStatus(500)
+	ErrInvalidRole                     = errs.NewError("invalid role").SetStatus(400)
+	ErrRoomFull                        = errs.NewError("room is full").SetStatus(400)
+	ErrNameAlreadyExists               = errs.NewError("name already exists").SetStatus(409)
+	ErrInvalidMaxPlayers               = errs.NewError("max_players must be greater than 1").SetStatus(400)
+	ErrInvalidMinPlayers               = errs.NewError("min_players must be greater than 2").SetStatus(400)
+	ErrMinPlayersGreaterThanMaxPlayers = errs.NewError("min_players must be less than max_players").SetStatus(400)
+	ErrGenerateCode                    = errs.NewError("error generating code").SetStatus(500)
 )
 
 func (r *Room) Validate() *errs.Error {
@@ -66,7 +63,20 @@ func (r *Room) Validate() *errs.Error {
 	if r.MinPlayers <= 0 {
 		return ErrInvalidMinPlayers
 	}
+	if r.MinPlayers > r.MaxPlayers {
+		return ErrMinPlayersGreaterThanMaxPlayers
+	}
 
+	return nil
+}
+
+func (r *Room) AddPlayer(p *player.Player) *errs.Error {
+	if r.IsFull() {
+		return ErrRoomFull
+	}
+
+	r.Players[p.ID] = p
+	r.TotalPlayers++
 	return nil
 }
 
@@ -90,46 +100,5 @@ func (r *Room) generateCode() *errs.Error {
 // ----- ... -----
 
 func (r *Room) IsFull() bool {
-	return len(r.Players) >= r.MaxPlayers
-}
-
-// ----- ... -----
-
-type PlayerRole string
-
-func (r PlayerRole) String() string {
-	return string(r)
-}
-
-func (r PlayerRole) IsValid() bool {
-	switch r {
-	case Host, Adm, Member:
-		return true
-	}
-	return false
-}
-
-const (
-	Host   PlayerRole = "HOST"
-	Adm    PlayerRole = "ADMIN"
-	Member PlayerRole = "MEMBER"
-)
-
-type Player struct {
-	*player.Player
-	Role     PlayerRole
-	Score    int
-	JoinedAt time.Time
-}
-
-func NewPlayer(p *player.Player, role PlayerRole) (*Player, *errs.Error) {
-	if !role.IsValid() {
-		return nil, ErrInvalidRole
-	}
-
-	return &Player{
-		Player: p,
-		Role:   role,
-		Score:  0,
-	}, nil
+	return r.TotalPlayers >= r.MaxPlayers
 }

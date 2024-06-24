@@ -43,3 +43,19 @@ func (p *PlayerRepository) Exists(ctx context.Context, id string) (bool, *errs.E
 	_, exists := memdata.Players[id]
 	return exists, nil
 }
+
+// ----- ... -----
+
+func (p *PlayerRepository) Create(ctx context.Context, player *player.Player) *errs.Error {
+	memdata.Players[player.ID] = &memdata.Player{
+		ID:        player.ID,
+		Nickname:  player.Nickname,
+		Role:      string(player.Role),
+		Score:     0,
+		JoinedAt:  player.JoinedAt,
+		CreatedAt: player.CreatedAt,
+		UpdatedAt: player.UpdatedAt,
+	}
+
+	return nil
+}

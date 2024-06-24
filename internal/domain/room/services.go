@@ -2,6 +2,7 @@ package room
 
 import (
 	"context"
+	"time"
 
 	"github.com/joaovds/stop-go/internal/domain/player"
 	"github.com/joaovds/stop-go/pkg/errs"
@@ -24,27 +25,35 @@ func (s *Service) PlayerExists(ctx context.Context, playerID string) (bool, *err
 
 // ----- ... -----
 
-func (s *Service) CreateRoom(ctx context.Context, creatorID string, roomParam *Room) *errs.Error {
-	playerRes, err := s.playerRepo.FindByID(ctx, creatorID)
-	if err.IsError() {
+func (s *Service) CreateRoom(ctx context.Context, creator *player.Player, roomParam *Room) *errs.Error {
+	if err := roomParam.Validate(); err.IsError() {
+		return err
+	}
+	if err := creator.Validate(); err.IsError() {
 		return err
 	}
 
+	_, err := s.playerRepo.FindByID(ctx, creator.ID)
+	if err.IsNil() {
+		return player.ErrPlayerAlreadyExists
+	}
 	if exists, err := s.roomRepo.NameExists(ctx, roomParam.Name); err.IsError() {
 		return err
 	} else if exists {
 		return ErrNameAlreadyExists
 	}
 
-	if p, err := NewPlayer(playerRes, Host); err.IsError() {
-		return err
-	} else {
-		roomParam.Players[playerRes.ID] = p
-	}
+	creator.Role = player.Host
 
+	err = s.playerRepo.Create(ctx, creator)
+	if err.IsError() {
+		return err
+	}
 	err = s.roomRepo.Create(ctx, roomParam)
 	if err.IsError() {
 		return err
+	} else {
+		creator.JoinedAt = time.Now()
 	}
 
 	return nil

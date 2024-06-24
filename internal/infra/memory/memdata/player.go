@@ -14,17 +14,29 @@ type Player struct {
 	Role      string
 	Score     int
 	JoinedAt  time.Time
-	InRoom    bool
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
 
-// ----- ... -----
+func NewPlayer(p *player.Player) *Player {
+	return &Player{
+		ID:        p.ID,
+		Nickname:  p.Nickname,
+		Role:      string(p.Role),
+		Score:     p.Score,
+		JoinedAt:  p.JoinedAt,
+		CreatedAt: p.CreatedAt,
+		UpdatedAt: p.UpdatedAt,
+	}
+}
 
 func (p *Player) ToDomain() *player.Player {
 	return &player.Player{
 		ID:        p.ID,
 		Nickname:  p.Nickname,
+		Role:      player.PlayerRole(p.Role),
+		Score:     p.Score,
+		JoinedAt:  p.JoinedAt,
 		CreatedAt: p.CreatedAt,
 		UpdatedAt: p.UpdatedAt,
 	}

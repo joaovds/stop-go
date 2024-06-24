@@ -26,12 +26,12 @@ func (c *Create) Execute(ctx context.Context, params *CreateInput) *errs.Error {
 		return err
 	}
 
-	input, err := inputToRoom(params)
+	roomInput, playerInput, err := inputToRoom(params)
 	if err.IsError() {
 		return err
 	}
 
-	err = c.service.CreateRoom(ctx, params.CreatorID, input)
+	err = c.service.CreateRoom(ctx, playerInput, roomInput)
 	if err.IsError() {
 		return err
 	}
@@ -42,15 +42,19 @@ func (c *Create) Execute(ctx context.Context, params *CreateInput) *errs.Error {
 // ----- ... -----
 
 type CreateInput struct {
-	CreatorID  string `json:"creator_id"`
-	Name       string `json:"name"`
-	MaxPlayers int    `json:"max_players"`
-	MinPlayers int    `json:"min_players"`
+	Creator    Creator `json:"creator"`
+	Name       string  `json:"name"`
+	MaxPlayers int     `json:"max_players"`
+	MinPlayers int     `json:"min_players"`
+}
+
+type Creator struct {
+	Nickname string `json:"nickname"`
 }
 
 func (i *CreateInput) Validate() *errs.Error {
-	if i.CreatorID == "" {
-		return errs.NewError("creator_id is required").SetStatus(400)
+	if i.Creator.Nickname == "" {
+		return errs.NewError("creator nickname is required").SetStatus(400)
 	}
 	if i.Name == "" {
 		return errs.NewError("name is required").SetStatus(400)
@@ -64,19 +68,28 @@ func (i *CreateInput) Validate() *errs.Error {
 	return nil
 }
 
-func inputToRoom(input *CreateInput) (*room.Room, *errs.Error) {
-	creator := &player.Player{ID: input.CreatorID}
+func inputToRoom(input *CreateInput) (*room.Room, *player.Player, *errs.Error) {
+	p, err := player.NewPlayer(providers.NewID(), input.Creator.Nickname, player.Host)
+	if err.IsError() {
+		return nil, nil, err
+	}
+	if err := p.Validate(); err.IsError() {
+		return nil, nil, err
+	}
 
 	res, err := room.NewRoom(
 		providers.NewID(),
 		input.Name,
 		input.MaxPlayers,
 		input.MinPlayers,
-		creator,
+		p,
 	)
 	if err.IsError() {
-		return nil, err
+		return nil, nil, err
+	}
+	if err := res.Validate(); err.IsError() {
+		return nil, nil, err
 	}
 
-	return res, nil
+	return res, p, nil
 }

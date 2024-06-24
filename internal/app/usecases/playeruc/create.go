@@ -45,7 +45,7 @@ type CreateInput struct {
 }
 
 func inputToPlayer(input *CreateInput) (*player.Player, *errs.Error) {
-	res, err := player.NewPlayer(providers.NewID(), input.Nickname)
+	res, err := player.NewPlayer(providers.NewID(), input.Nickname, player.Member)
 	if err.IsError() {
 		return nil, err
 	}

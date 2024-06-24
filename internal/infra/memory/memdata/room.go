@@ -26,19 +26,9 @@ type Room struct {
 // ----- ... -----
 
 func (r *Room) ToDomain() *room.Room {
-	players := make(map[string]*room.Player)
+	players := make(map[string]*player.Player)
 	for _, playerValue := range r.Players {
-		players[playerValue.ID] = &room.Player{
-			Player: &player.Player{
-				ID:        playerValue.ID,
-				Nickname:  playerValue.Nickname,
-				CreatedAt: playerValue.CreatedAt,
-				UpdatedAt: playerValue.UpdatedAt,
-			},
-			Score:    playerValue.Score,
-			Role:     room.PlayerRole(playerValue.Role),
-			JoinedAt: playerValue.JoinedAt,
-		}
+		players[playerValue.ID] = playerValue.ToDomain()
 	}
 
 	result := &room.Room{

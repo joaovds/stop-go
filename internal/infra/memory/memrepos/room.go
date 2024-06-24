@@ -21,16 +21,6 @@ func (r *RoomRepository) FindAll(ctx context.Context) ([]*room.Room, *errs.Error
 
 	result := make([]*room.Room, 0)
 	for _, roomValue := range rooms {
-		players := make(map[string]*room.Player)
-		for _, playerValue := range roomValue.Players {
-			players[playerValue.ID] = &room.Player{
-				Player:   playerValue.ToDomain(),
-				Score:    playerValue.Score,
-				Role:     room.PlayerRole(playerValue.Role),
-				JoinedAt: playerValue.JoinedAt,
-			}
-		}
-
 		result = append(result, roomValue.ToDomain())
 	}
 
@@ -43,15 +33,6 @@ func (r *RoomRepository) FindByID(ctx context.Context, id string) (*room.Room, *
 	roomValue, exists := memdata.Rooms[id]
 	if !exists {
 		return nil, errs.NewError("room not found").SetStatus(404)
-	}
-	players := make(map[string]*room.Player)
-	for _, playerValue := range roomValue.Players {
-		players[playerValue.ID] = &room.Player{
-			Player:   playerValue.ToDomain(),
-			Score:    playerValue.Score,
-			Role:     room.PlayerRole(playerValue.Role),
-			JoinedAt: playerValue.JoinedAt,
-		}
 	}
 
 	return roomValue.ToDomain(), nil
@@ -72,6 +53,11 @@ func (r *RoomRepository) NameExists(ctx context.Context, name string) (bool, *er
 // ----- ... -----
 
 func (r *RoomRepository) Create(ctx context.Context, roomParams *room.Room) *errs.Error {
+	players := make(map[string]*memdata.Player)
+	for _, player := range roomParams.Players {
+		players[player.ID] = memdata.NewPlayer(player)
+	}
+
 	newValue := &memdata.Room{
 		ID:        roomParams.ID,
 		Name:      roomParams.Name,
@@ -81,7 +67,7 @@ func (r *RoomRepository) Create(ctx context.Context, roomParams *room.Room) *err
 		HostID:    roomParams.HostID,
 		Password:  "",
 		IsPrivate: false,
-		Players:   make(map[string]*memdata.Player, 0),
+		Players:   players,
 		CreatedAt: roomParams.CreatedAt,
 		UpdatedAt: roomParams.UpdatedAt,
 	}
