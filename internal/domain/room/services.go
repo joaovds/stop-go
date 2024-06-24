@@ -44,6 +44,7 @@ func (s *Service) CreateRoom(ctx context.Context, creator *player.Player, roomPa
 	}
 
 	creator.Role = player.Host
+	creator.JoinedAt = time.Now()
 
 	err = s.playerRepo.Create(ctx, creator)
 	if err.IsError() {
@@ -52,8 +53,6 @@ func (s *Service) CreateRoom(ctx context.Context, creator *player.Player, roomPa
 	err = s.roomRepo.Create(ctx, roomParam)
 	if err.IsError() {
 		return err
-	} else {
-		creator.JoinedAt = time.Now()
 	}
 
 	return nil

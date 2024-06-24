@@ -23,6 +23,7 @@ func NewRoomRoutes(muxV1 *http.ServeMux) *RoomRoutes {
 		muxV1: muxV1,
 		handlers: handlers.NewRoomHandlers(
 			roomuc.NewFindAll(roomRepo),
+			roomuc.NewFindByID(roomRepo),
 			roomuc.NewCreate(roomRepo, playerRepo),
 		),
 	}
@@ -32,5 +33,6 @@ func NewRoomRoutes(muxV1 *http.ServeMux) *RoomRoutes {
 
 func (r *RoomRoutes) RegisterRoutes() {
 	r.muxV1.HandleFunc("GET /rooms", r.handlers.FindAll)
+	r.muxV1.HandleFunc("GET /rooms/{id}", r.handlers.FindByID)
 	r.muxV1.HandleFunc("POST /rooms", r.handlers.Create)
 }

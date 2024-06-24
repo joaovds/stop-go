@@ -10,17 +10,20 @@ import (
 )
 
 type RoomHandlers struct {
-	findAllUseCase *roomuc.FindAll
-	createUseCase  *roomuc.Create
+	findAllUseCase  *roomuc.FindAll
+	findByIDUseCase *roomuc.FindByID
+	createUseCase   *roomuc.Create
 }
 
 func NewRoomHandlers(
 	findAllUseCase *roomuc.FindAll,
+	findByIDUseCase *roomuc.FindByID,
 	createUseCase *roomuc.Create,
 ) *RoomHandlers {
 	return &RoomHandlers{
-		findAllUseCase: findAllUseCase,
-		createUseCase:  createUseCase,
+		findAllUseCase:  findAllUseCase,
+		findByIDUseCase: findByIDUseCase,
+		createUseCase:   createUseCase,
 	}
 }
 
@@ -38,6 +41,22 @@ func (h *RoomHandlers) FindAll(w http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(w).Encode(rooms)
 }
 
+// ----- ... -----
+
+func (h *RoomHandlers) FindByID(w http.ResponseWriter, req *http.Request) {
+	roomID := req.PathValue("id")
+
+	roomData, err := h.findByIDUseCase.Execute(req.Context(), roomID)
+	if err.IsError() {
+		response.NewHttpResError(err.Status, err.Error()).WriteJson(w)
+		return
+	}
+
+	helpers.NewOk(roomData).WriteJson(w)
+}
+
+// ----- ... -----
+
 func (h *RoomHandlers) Create(w http.ResponseWriter, req *http.Request) {
 	var room roomuc.CreateInput
 	if err := json.NewDecoder(req.Body).Decode(&room); err != nil {
@@ -53,3 +72,5 @@ func (h *RoomHandlers) Create(w http.ResponseWriter, req *http.Request) {
 
 	helpers.NewCreated(nil).WriteJson(w)
 }
+
+// ----- ... -----
